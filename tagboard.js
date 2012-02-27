@@ -82,6 +82,16 @@ TagBoard.draw = function()
     this.context.fillRect(0, 0, this.width, this.height); 
 
     this.context.fillStyle = "#000000";
+
+    if(this.debug)
+    { 
+        var diff;
+        var fps;
+        this.frame_cnt++;
+        diff = (new Date()).getTime() - this.start;
+        fps = this.frame_cnt / (diff / 1000);
+        this.context.fillText(fps.toFixed(2), 20, 10);
+    }
 };
 
 TagBoard.drawSprite = function(sprite, font_size, style)
@@ -106,8 +116,10 @@ TagBoard.init = function(width, height, context, sprites)
     this.sprites = sprites;
     this.mouse_x = 0;
     this.mouse_y = 0;
-
-    this.fonts = [];
+    
+    this.debug = false;
+    this.frame_cnt = 0;
+    this.start = (new Date()).getTime();
 };
 
 //Call this function after the fillStyle.
