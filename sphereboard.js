@@ -42,8 +42,8 @@ SphereBoard.init = function(width, height, context, sprites)
 SphereBoard.draw = function() 
 { 
     var found_focus = false;
-    var focus_font_size = 0;
     var fast_draw = false;
+
     if(Math.abs(this.rotation_x) <= 0.01 && Math.abs(this.rotation_y) <= 0.01)
     { 
     return;
@@ -56,7 +56,6 @@ SphereBoard.draw = function()
     { 
         var spr = this.sprites[i];
         var font_size;
-
 
         if(spr.z < this.radius*2/3 )
         { 
@@ -71,21 +70,24 @@ SphereBoard.draw = function()
             }
 
             if(TagBoard.mouseOnSprite(spr, font_size))
-            { 
-                if( found_focus && spr.z > this.focusspr)
+            { //Sprites is sorted! Set the top one as focused!
+                if(!found_focus)
                 { 
                     this.focusspr = spr;
-                    focus_font_size = font_size;
-                }
-                else
-                { 
                     found_focus = true;
-                    this.focusspr = spr;
-                    focus_font_size = font_size;
                 }
             }
         }
-        TagBoard.drawSprite(spr, Math.round(font_size), "#333333", fast_draw);
+        
+        if(this.focusspr == spr)
+        { 
+            TagBoard.drawSprite(spr, Math.round(font_size), "#333333", true, fast_draw);
+        }
+        else
+        { 
+            TagBoard.drawSprite(spr, Math.round(font_size), "#333333", false, fast_draw);
+        }
+
         if(spr.z < this.radius*2/3 )
         { 
             //The sprites is sorted. Use fast draw!
@@ -98,19 +100,6 @@ SphereBoard.draw = function()
     }
 
     TagBoard.sortSprites('z', true);
-
-    if(!found_focus)
-    { 
-        this.focusspr = null;
-    }
-    else
-    { 
-        this.context.font = focus_font_size.toString() + "px sans-serif";
-        w = this.context.measureText(this.focusspr.name).width;
-        this.context.strokeRect(Math.max(this.focusspr.x - w/2, 0) ,
-                this.focusspr.y - 16,
-                w, 16+1);
-    }
 };
 
 SphereBoard.spritesMove = function() 

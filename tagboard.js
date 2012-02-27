@@ -107,10 +107,10 @@ TagBoard.draw = function()
     }
 };
 
-TagBoard.drawSprite = function(sprite, font_size, style, fast_draw)
+TagBoard.drawSprite = function(sprite, font_size, style, is_focus, fast_draw)
 { 
 
-    //If fast_draw == true then skip setting font. It would cost more time on firefox.
+    //If fast_draw is true then skip setting font. It would cost more time on firefox.
     if(!fast_draw)
     { 
         this.context.font = font_size.toString() + "px sans-serif";
@@ -118,6 +118,15 @@ TagBoard.drawSprite = function(sprite, font_size, style, fast_draw)
     this.context.fillStyle = style;
     this.context.textAlign = 'center';
     this.context.fillText(sprite.name, sprite.x, sprite.y);
+   
+    //TODO: We should compile the sprite and focusspr. is_focus might not be needed.
+    if(is_focus)
+    { 
+        w = this.context.measureText(sprite.name).width;
+        this.context.strokeRect(Math.max(sprite.x - w/2, 0),
+                sprite.y - font_size,
+                w, font_size+1);
+    }
 };
 
 TagBoard.render = function() 
