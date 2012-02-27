@@ -35,13 +35,15 @@ SphereBoard.init = function(width, height, context, sprites)
 
     this.f_size_max = 17;
     this.f_size_min = 5;
-
+    
+    TagBoard.sortSprites('z', true);
 };
 
 SphereBoard.draw = function() 
 { 
     var found_focus = false;
     var focus_font_size = 0;
+    var fast_draw = false;
     if(Math.abs(this.rotation_x) <= 0.01 && Math.abs(this.rotation_y) <= 0.01)
     { 
     return;
@@ -52,14 +54,9 @@ SphereBoard.draw = function()
 
     for(i = 0; i < this.sprites.length; i++)
     { 
-        //Clone the sprite to draw.
-        //var spr = Object.create(this.sprites[i]);
         var spr = this.sprites[i];
         var font_size;
 
-        TagBoard.rotateX(spr, this.rotation_x);
-        TagBoard.rotateY(spr, this.rotation_y);
-        //TagBoard.rotateZ(spr, 0);
 
         if(spr.z < this.radius*2/3 )
         { 
@@ -88,9 +85,19 @@ SphereBoard.draw = function()
                 }
             }
         }
-        TagBoard.drawSprite(spr, Math.round(font_size), "#333333");
+        TagBoard.drawSprite(spr, Math.round(font_size), "#333333", fast_draw);
+        if(spr.z < this.radius*2/3 )
+        { 
+            //The sprites is sorted. Use fast draw!
+            fast_draw = true;
+        }
+
+        TagBoard.rotateX(spr, this.rotation_x);
+        TagBoard.rotateY(spr, this.rotation_y);
+        //TagBoard.rotateZ(spr, 0);
     }
 
+    TagBoard.sortSprites('z', true);
 
     if(!found_focus)
     { 

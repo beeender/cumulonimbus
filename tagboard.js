@@ -56,6 +56,19 @@ TagBoard.rotateZ = function(point, radians)
         this.height/2;
 };
 
+TagBoard.sortSprites = function(member, reverse)
+{ 
+    sort_function = function(a, b)
+    { 
+        if(reverse)
+        { 
+            return (b[member] - a[member]);
+        }
+
+        return (a[member] - b[member]);
+    };
+    this.sprites.sort(sort_function);
+};
 
 TagBoard.onMouseMove = function(x, y) 
 {
@@ -90,13 +103,18 @@ TagBoard.draw = function()
         this.frame_cnt++;
         diff = (new Date()).getTime() - this.start;
         fps = this.frame_cnt / (diff / 1000);
-        this.context.fillText(fps.toFixed(2), 20, 10);
+        this.context.fillText(fps.toFixed(2), 30, 20);
     }
 };
 
-TagBoard.drawSprite = function(sprite, font_size, style)
+TagBoard.drawSprite = function(sprite, font_size, style, fast_draw)
 { 
-    this.context.font = font_size.toString() + "px sans-serif";
+
+    //If fast_draw == true then skip setting font. It would cost more time on firefox.
+    if(!fast_draw)
+    { 
+        this.context.font = font_size.toString() + "px sans-serif";
+    }
     this.context.fillStyle = style;
     this.context.textAlign = 'center';
     this.context.fillText(sprite.name, sprite.x, sprite.y);
