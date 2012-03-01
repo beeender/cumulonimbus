@@ -1,16 +1,11 @@
 var SphereBoard = Object.create(TagBoard);
 
-Object.defineProperty(SphereBoard, 'max_font_size', {
-value: 17,
-writable: false
-});
-
-SphereBoard.init = function(width, height, context, sprites) 
+SphereBoard.init = function(canvas, context, sprites, opts) 
 { 
-    TagBoard.init(width, height, context, sprites);
+    TagBoard.init(canvas, context, sprites, opts);
 
     //Leave some space for text rendering.
-    this.radius = Math.min(width/2, height/2) * 0.8;
+    this.radius = Math.min(this.width/2, this.height/2) * 0.8;
 
     //Perfectly evenly distributed points on a sphere
     //http://www.softimageblog.com/archives/115

@@ -1,3 +1,14 @@
+//Global definitions
+var l_tag_sprites = [];
+var l_tagboard = null;
+var l_canvas = null;
+
+function Options()
+{ 
+    this.bgcolor = '#FFFFFF';
+    this.transparency = false;
+}
+
 function Sprite(name, url)
 {
     this.name = name;
@@ -10,16 +21,6 @@ function Sprite(name, url)
 }
 
 var TagBoard = Object.create(null);
-
-Object.defineProperty(TagBoard, 'bgcolor', {
-value: '#FFFFF0',
-writable: true
-});
-
-Object.defineProperty(TagBoard, 'focusspr', {
-value: null,
-writable: true
-});
 
 TagBoard.rotateX = function(point, radians) 
 {
@@ -91,11 +92,21 @@ TagBoard.spritesMove = function()
 
 TagBoard.draw = function() 
 { 
+    if(this.transparency)
+    { 
+        this.context.globalAlpha = 0.0;
+    }
+    else
+    { 
+        this.context.globalAlpha = 1;
+    }
+
     this.context.fillStyle = this.bgcolor;
+    //this.context.fillRect(0, 0, this.width, this.height); 
+    this.context.clearRect(0, 0, this.width, this.height); 
     this.context.fillRect(0, 0, this.width, this.height); 
-
-    this.context.fillStyle = "#000000";
-
+    this.context.globalAlpha = 1;
+    
     if(this.debug)
     { 
         var diff;
@@ -135,12 +146,18 @@ TagBoard.render = function()
     this.spritesMove();
 };
 
-TagBoard.init = function(width, height, context, sprites) 
+TagBoard.init = function(canvas, context, sprites, opts) 
 { 
-    this.width = width;
-    this.height = height;
+    this.canvas = canvas;
     this.context = context;
+    this.width = canvas.width;
+    this.height = canvas.height;
     this.sprites = sprites;
+
+    this.bgcolor = opts.bgcolor;
+    this.transparency = opts.transparency;
+
+    this.focusspr = null;
     this.mouse_x = 0;
     this.mouse_y = 0;
     
@@ -166,9 +183,13 @@ TagBoard.mouseOnSprite = function(spr, fontsize)
     return false;
 };
 
-function createTagBoard(type, width, height, context, sprites)
+function createTagBoard(type, opts)
 { 
+    var context;
     var obj = null;
+    l_canvas = document.getElementById("myCanvas");
+    context = l_canvas.getContext("2d");
+
     switch(type){ 
         case "sphere":
             obj = Object.create(SphereBoard);
@@ -179,48 +200,38 @@ function createTagBoard(type, width, height, context, sprites)
             break;
     }
 
-    obj.init(width, height, context, sprites);
-    return obj;
-}
+    obj.init(l_canvas, context, l_tag_sprites, opts);
 
-//Test code starts
-var tag_sprites = [];
-var aniboard = null;
-var context = null;
-var canvas = null;
+    l_tagboard = obj;
+}
 
 function addTag(name, url) 
 { 
-    tag_sprites[tag_sprites.length] = new Sprite(name, url);
+    l_tag_sprites[l_tag_sprites.length] = new Sprite(name, url);
 }
 
 function timeout() { 
-    aniboard.render();
+    l_tagboard.render();
 }
 
 function onMouseMove(ev) {
-    var x = ev.pageX - canvas.offsetLeft;
-    var y = ev.pageY - canvas.offsetTop;
+    var x = ev.pageX - l_canvas.offsetLeft;
+    var y = ev.pageY - l_canvas.offsetTop;
 
-    aniboard.onMouseMove(x, y);
+    l_tagboard.onMouseMove(x, y);
 }
 
 function onMouseClick(ev){ 
-    var x = ev.pageX - canvas.offsetLeft;
-    var y = ev.pageY - canvas.offsetTop;
+    var x = ev.pageX - l_canvas.offsetLeft;
+    var y = ev.pageY - l_canvas.offsetTop;
 
-    aniboard.onMouseClick(x, y);
+    l_tagboard.onMouseClick(x, y);
 }
 
 function start()
 { 
-    time_begin = new Date().getTime();
-    // do stuff here
-    canvas = document.getElementById("myCanvas");
-    context = canvas.getContext("2d");
-    aniboard = createTagBoard("sphere", canvas.width, canvas.height, context, tag_sprites);
-    canvas.addEventListener("mousemove", onMouseMove, false);
-    canvas.addEventListener("click", onMouseClick, false);
+    l_canvas.addEventListener("mousemove", onMouseMove, false);
+    l_canvas.addEventListener("click", onMouseClick, false);
 
     setInterval(timeout, 1000/20);
 }

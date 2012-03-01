@@ -131,6 +131,10 @@ function tagboar_widget($args)
             break;
         }
     }
+    echo "var opts = new Options();";
+    echo "opts.bgcolor = \"#".$options['bgcolor']."\";";
+    echo "opts.transparency = ".$options['bg_transparency'].";";
+    echo "createTagBoard('sphere', opts);";
     echo "window.onload = start;";
     echo "</script>";
 }
