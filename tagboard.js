@@ -9,190 +9,185 @@ function Options()
     this.transparency = false;
 }
 
-function Sprite(name, url)
-{
-    this.name = name;
-    this.x = 0;
-    this.y = 0;
-    this.z = 0;
-    this.link = url;
+var Sprite = {
+    createNew:function(name, url)  {
+        var sprite = {};
 
-    this.font = null;
-}
+        sprite.name = name;
+        sprite.x = 0;
+        sprite.y = 0;
+        sprite.z = 0;
+        sprite.link = url;
+        sprite.font = null;
 
-var TagBoard = Object.create(null);
-
-TagBoard.rotateX = function(point, radians) 
-{
-    var y = point.y - this.height/2;
-    var cos_r = Math.cos(radians);
-    var sin_r = Math.sin(radians);
-
-    point.y = (y * cos_r) + (point.z * sin_r * -1.0) +
-        this.height/2;
-    point.z = (y * sin_r) + (point.z * cos_r);
-};
-
-TagBoard.rotateY = function(point, radians) 
-{
-    var x = point.x - this.width/2;
-    var cos_r = Math.cos(radians);
-    var sin_r = Math.sin(radians);
-
-    point.x = (x * cos_r) + (point.z * sin_r * -1.0) +
-        this.width/2;
-    point.z = (x * sin_r) + (point.z * cos_r);
-};
-
-TagBoard.rotateZ = function(point, radians) 
-{
-    var x = point.x - this.width/2;
-    var cos_r = Math.cos(radians);
-    var sin_r = Math.sin(radians);
-
-    point.y -= this.height/2;
-    point.x = (x * cos_r) + (point.y * sin_r * -1.0) +
-        this.width/2; 
-    point.y = (x * sin_r) + (point.y * cos_r) +
-        this.height/2;
-};
-
-TagBoard.sortSprites = function(member, reverse)
-{ 
-    sort_function = function(a, b)
-    { 
-        if(reverse)
-        { 
-            return (b[member] - a[member]);
-        }
-
-        return (a[member] - b[member]);
-    };
-    this.sprites.sort(sort_function);
-};
-
-TagBoard.onMouseMove = function(x, y) 
-{
-    this.mouse_x = x;
-    this.mouse_y = y;
-};
-
-TagBoard.onMouseClick = function(x, y)
-{ 
-    if(this.focusspr !== null)
-    { 
-        window.location = this.focusspr.link;
+        return sprite;
     }
 };
 
-TagBoard.spritesMove = function() 
-{ 
-    //Sprites move!
-};
+var TagBoard = {
 
-TagBoard.draw = function() 
-{ 
-    if(this.transparency)
-    { 
-        this.context.globalAlpha = 0.0;
-    }
-    else
-    { 
-        this.context.globalAlpha = 1;
-    }
+    createNew:function(canvas, context, sprites, opts) {
+        var tagBoard = {};
 
-    this.context.fillStyle = this.bgcolor;
-    //this.context.fillRect(0, 0, this.width, this.height); 
-    this.context.clearRect(0, 0, this.width, this.height); 
-    this.context.fillRect(0, 0, this.width, this.height); 
-    this.context.globalAlpha = 1;
-    
-    if(this.debug)
-    { 
-        var diff;
-        var fps;
-        this.frame_cnt++;
-        diff = (new Date()).getTime() - this.start;
-        fps = this.frame_cnt / (diff / 1000);
-        this.context.fillText(fps.toFixed(2), 30, 20);
-    }
-};
+        tagBoard.canvas = canvas;
+        tagBoard.context = context;
+        tagBoard.width = canvas.width;
+        tagBoard.height = canvas.height;
+        tagBoard.sprites = sprites;
 
-TagBoard.drawSprite = function(sprite, font_size, style, is_focus, fast_draw)
-{ 
+        tagBoard.bgcolor = opts.bgcolor;
+        tagBoard.transparency = opts.transparency;
 
-    //If fast_draw is true then skip setting font. It would cost more time on firefox.
-    if(!fast_draw)
-    { 
-        this.context.font = font_size.toString() + "px sans-serif";
-    }
-    this.context.fillStyle = style;
-    this.context.textAlign = 'center';
-    this.context.fillText(sprite.name, sprite.x, sprite.y);
-   
-    //TODO: We should compile the sprite and focusspr. is_focus might not be needed.
-    if(is_focus)
-    { 
-        w = this.context.measureText(sprite.name).width;
-        this.context.strokeRect(Math.max(sprite.x - w/2, 0),
+        tagBoard.focusspr = null;
+        tagBoard.mouse_x = 0;
+        tagBoard.mouse_y = 0;
+
+        tagBoard.debug = false;
+        tagBoard.frame_cnt = 0;
+        tagBoard.start = (new Date()).getTime();
+
+        tagBoard.rotateX = function(point, radians) {
+            var y = point.y - tagBoard.height/2;
+            var cos_r = Math.cos(radians);
+            var sin_r = Math.sin(radians);
+
+            point.y = (y * cos_r) + (point.z * sin_r * -1.0) +
+                tagBoard.height/2;
+            point.z = (y * sin_r) + (point.z * cos_r);
+        };
+
+
+        tagBoard.rotateY = function(point, radians) {
+            var x = point.x - tagBoard.width/2;
+            var cos_r = Math.cos(radians);
+            var sin_r = Math.sin(radians);
+
+            point.x = (x * cos_r) + (point.z * sin_r * -1.0) +
+                tagBoard.width/2;
+            point.z = (x * sin_r) + (point.z * cos_r);
+        };
+
+        tagBoard.rotateZ = function(point, radians) {
+            var x = point.x - tagBoard.width/2;
+            var cos_r = Math.cos(radians);
+            var sin_r = Math.sin(radians);
+
+            point.y -= tagBoard.height/2;
+            point.x = (x * cos_r) + (point.y * sin_r * -1.0) +
+                tagBoard.width/2; 
+            point.y = (x * sin_r) + (point.y * cos_r) +
+                tagBoard.height/2;
+        };
+
+        tagBoard.onMouseMove = function(x, y) {
+            tagBoard.mouse_x = x;
+            tagBoard.mouse_y = y;
+        };
+
+
+        tagBoard.onMouseClick = function(x, y) { 
+            if(tagBoard.focusspr !== null) { 
+                window.location = tagBoard.focusspr.link;
+            }
+        };
+
+        tagBoard.spritesMove = function() { 
+            //Sprites move!
+        };
+
+
+        tagBoard.draw = function() { 
+            if(tagBoard.transparency) { 
+                tagBoard.context.globalAlpha = 0.0;
+            } else { 
+                tagBoard.context.globalAlpha = 1;
+            }
+
+            tagBoard.context.fillStyle = tagBoard.bgcolor;
+            //tagBoard.context.fillRect(0, 0, tagBoard.width, tagBoard.height); 
+            tagBoard.context.clearRect(0, 0, tagBoard.width, tagBoard.height); 
+            tagBoard.context.fillRect(0, 0, tagBoard.width, tagBoard.height); 
+            tagBoard.context.globalAlpha = 1;
+
+            if(tagBoard.debug) { 
+                var diff;
+                var fps;
+                tagBoard.frame_cnt++;
+                diff = (new Date()).getTime() - tagBoard.start;
+                fps = tagBoard.frame_cnt / (diff / 1000);
+                tagBoard.context.fillText(fps.toFixed(2), 30, 20);
+            }
+        };
+
+        tagBoard.drawSprite = function(sprite, font_size, style, is_focus, fast_draw) { 
+
+            //If fast_draw is true then skip setting font. It would cost more time on firefox.
+            if(!fast_draw) { 
+                tagBoard.context.font = font_size.toString() + "px sans-serif";
+            }
+            tagBoard.context.fillStyle = style;
+            tagBoard.context.textAlign = 'center';
+            tagBoard.context.fillText(sprite.name, sprite.x, sprite.y);
+
+            //TODO: We should compile the sprite and focusspr. is_focus might not be needed.
+            if(tagBoard.focusspr == sprite)
+            { 
+                w = tagBoard.context.measureText(sprite.name).width;
+                tagBoard.context.strokeRect(Math.max(sprite.x - w/2, 0),
                 sprite.y - font_size,
                 w, font_size+1);
+            }
+        };
+
+        tagBoard.render = function() 
+        {
+            tagBoard.draw();
+            tagBoard.spritesMove();
+        };
+
+
+        tagBoard.mouseOnSprite = function(spr, fontsize) { 
+            var width;
+
+            width = tagBoard.context.measureText(spr.name).width;
+            //textAlign center
+            if(tagBoard.mouse_x >= Math.max(spr.x - width/2, 0) &&
+            tagBoard.mouse_x <= Math.min(spr.x + width/2, tagBoard.width) &&
+            tagBoard.mouse_y >= (spr.y - fontsize) && tagBoard.mouse_y <= spr.y) { 
+                return true;
+            }
+
+            return false;
+        };
+
+
+        tagBoard.sortSprites = function(member, reverse) { 
+            sort_function = function(a, b) { 
+                if(reverse) { 
+                    return (b[member] - a[member]);
+                }
+
+                return (a[member] - b[member]);
+            };
+
+            tagBoard.sprites.sort(sort_function);
+        };
+
+        return tagBoard;
     }
-};
-
-TagBoard.render = function() 
-{
-    this.draw();
-    this.spritesMove();
-};
-
-TagBoard.init = function(canvas, context, sprites, opts) 
-{ 
-    this.canvas = canvas;
-    this.context = context;
-    this.width = canvas.width;
-    this.height = canvas.height;
-    this.sprites = sprites;
-
-    this.bgcolor = opts.bgcolor;
-    this.transparency = opts.transparency;
-
-    this.focusspr = null;
-    this.mouse_x = 0;
-    this.mouse_y = 0;
-    
-    this.debug = false;
-    this.frame_cnt = 0;
-    this.start = (new Date()).getTime();
 };
 
 //Call this function after the fillStyle.
-TagBoard.mouseOnSprite = function(spr, fontsize)
-{ 
-    var width;
-
-    width = this.context.measureText(spr.name).width;
-    //textAlign center
-    if(this.mouse_x >= Math.max(spr.x - width/2, 0) &&
-        this.mouse_x <= Math.min(spr.x + width/2, this.width) &&
-            this.mouse_y >= (spr.y - fontsize) && this.mouse_y <= spr.y)
-    { 
-        return true;
-    }
-
-    return false;
-};
-
 function createTagBoard(type, opts)
 { 
     var context;
     var obj = null;
-    l_canvas = document.getElementById("myCanvas");
+    l_canvas = document.getElementById("tagboardCanvas");
     context = l_canvas.getContext("2d");
 
     switch(type){ 
         case "sphere":
-            obj = Object.create(SphereBoard);
+            obj = SphereBoard.createNew(l_canvas, context, l_tag_sprites, opts);
             break;
         case "matrix":
             break; 
@@ -200,14 +195,12 @@ function createTagBoard(type, opts)
             break;
     }
 
-    obj.init(l_canvas, context, l_tag_sprites, opts);
-
     l_tagboard = obj;
 }
 
 function addTag(name, url) 
 { 
-    l_tag_sprites[l_tag_sprites.length] = new Sprite(name, url);
+    l_tag_sprites[l_tag_sprites.length] = Sprite.createNew(name, url);
 }
 
 function timeout() { 
