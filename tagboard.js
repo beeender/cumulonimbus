@@ -107,7 +107,6 @@ var TagBoard = {
             }
 
             tagBoard.context.fillStyle = tagBoard.bgcolor;
-            //tagBoard.context.fillRect(0, 0, tagBoard.width, tagBoard.height);
             tagBoard.context.clearRect(0, 0, tagBoard.width, tagBoard.height);
             tagBoard.context.fillRect(0, 0, tagBoard.width, tagBoard.height);
             tagBoard.context.globalAlpha = 1;

@@ -1,11 +1,11 @@
 <?php
 /*
    Plugin Name: TagBoard
-   Plugin URI: 
-   Description: 
+   Plugin URI:
+   Description:
    Version: 0.00
    Author: Chen Mulong
-   Author URI: 
+   Author URI:
 
    Copyright 2012, Chen Mulong
 
@@ -23,8 +23,8 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function tagboard_widget_control()
-{ 
+function get_tagboard_options()
+{
     $default_options['title'] = '';
     $default_options['width'] = 120;
     $default_options['height'] = 120;
@@ -32,14 +32,21 @@ function tagboard_widget_control()
     $default_options['max_tags'] = 45;
     $default_options['bg_transparency'] = 'true';
 
-    $options = get_option('tagboard_options', $default_options);
-
+    $options  = get_option('tagboard_options', $default_options);
     if($options == $default_options)
-    { 
+    {
         add_option('tagboard_options', $options, ' ', 'no');
     }
 
-    if ($_POST["tagboard_widget_submit"] ) 
+    return $options;
+}
+
+function tagboard_widget_control()
+{
+
+    $options = get_tagboard_options();
+
+    if ($_POST["tagboard_widget_submit"] )
     {
         $newopts['title'] = strip_tags(stripslashes($_POST['tagboard_widget_title']));
         $newopts['width'] = strip_tags(stripslashes($_POST['tagboard_widget_width']));
@@ -47,43 +54,43 @@ function tagboard_widget_control()
         $newopts['bgcolor'] = strip_tags(stripslashes($_POST['tagboard_widget_bgcolor']));
         $newopts['max_tags'] = strip_tags(stripslashes($_POST['tagboard_widget_maxtags']));
         $newopts['bg_transparency'] = strip_tags(stripslashes($_POST['tagboard_widget_bgtran']));
-        
+
         if(strlen($newopts['title']) > 50)
-        { 
+        {
             $newopts['title'] = $options['title'];
         }
 
         if(!ctype_digit($newopts['width']) ||
-                strlen($newopts['width']) > 4)
-        { 
+            strlen($newopts['width']) > 4)
+        {
             $newopts['width'] = $options['width'];
         }
 
         if(!ctype_digit($newopts['height']) ||
-                strlen($newopts['height']) > 4)
-        { 
+            strlen($newopts['height']) > 4)
+        {
             $newopts['height'] = $options['height'];
         }
 
         if(!ctype_xdigit($newopts['bgcolor']) ||
-                strlen($newopts['bgcolor']) > 6)
+            strlen($newopts['bgcolor']) > 6)
         { //Drop invalid color input
             $newopts['bgcolor'] = $options['bgcolor'];
         }
 
         if(!ctype_digit($newopts['max_tags']) ||
-                strlen($newopts['max_tags']) > 3)
-        { 
+            strlen($newopts['max_tags']) > 3)
+        {
             $newopts['max_tags'] = $options['max_tags'];
         }
-        
+
         if($newopts['bg_transparency'] != 'true')
-        { 
+        {
             $newopts['bg_transparency'] = 'false';
         }
-        
+
         if($options != $newopts)
-        { 
+        {
             $options = $newopts;
             update_option('tagboard_options', $options);
         }
@@ -96,7 +103,7 @@ function tagboard_widget_control()
     $max_tags = attribute_escape($options['max_tags']);
     $bg_transparency = attribute_escape($options['bg_transparency']);
 
-    ?>
+?>
         <p><label for="tagboard_widget_title"><?php _e('Title:'); ?> <input class="widefat" id="tagboard_widget_title" name="tagboard_widget_title" type="text" value="<?php echo $title; ?>" /></label></p>
         <p><label for="tagboard_widget_width"><?php _e('Width:'); ?> <input class="widefat" id="tagboard_widget_width" name="tagboard_widget_width" type="text" value="<?php echo $width; ?>" /></label></p>
         <p><label for="tagboard_widget_height"><?php _e('height:'); ?> <input class="widefat" id="tagboard_widget_height" name="tagboard_widget_height" type="text" value="<?php echo $height; ?>" /></label></p>
@@ -104,30 +111,40 @@ function tagboard_widget_control()
         <p><label for="tagboard_widget_maxtags"><?php _e('Max number of tags:'); ?> <input class="widefat" id="tagboard_widget_maxtags" name="tagboard_widget_maxtags" type="text" value="<?php echo $max_tags; ?>" /></label></p>
         <p><label for="tagboard_widget_bgtran"> <input class="widefat" id="tagboard_widget_bgtran" name="tagboard_widget_bgtran" type="checkbox" value="true"<?php if( $bg_transparency == "true" ){ echo ' checked="checked"';} ?>" /> <?php _e('Background transparency'); ?> </label></p>
         <input type="hidden" id="tagboard_widget_submit" name="tagboard_widget_submit" value="1" />
-        <?php
+<?php
 }
 
 function tagboar_widget($args)
-{ 
-    $max_tags = 45;
+{
+    $options = get_option('tagboard_options');
+
+    $max_tags = $options['max_tags'];
     $plugin_path = plugins_url('tagboard/');
     $tags = get_tags(array('orderby' => 'count', 'order' => 'DESC'));
 
-    $options = get_option('tagboard_options');
     $width = $options['width'];
     $height = $options['height'];
 
     echo "<script src='".$plugin_path."tagboard.js' type='text/javascript'></script>";
     echo "<script src='".$plugin_path."sphereboard.js' type='text/javascript'></script>";
-    echo "<canvas id='myCanvas' width=$width height=$height></canvas>";
+    echo $before_widget;
+    if( !empty($options['title']) )
+    {
+        echo $before_title . $options['title'] . $after_title;
+    }
+    echo "<div id='tagcloud' style='display:none'>";
+    wp_tag_cloud();
+    echo "</div>";
+    echo "<canvas id='tagboardCanvas' width=$width height=$height></canvas>";
     echo "<script type = 'text/javascript'>";
+    echo $after_widget;
     foreach ($tags as $tag)
-    { 
+    {
         $tag_link = get_tag_link($tag->term_id);
         echo "addTag(\"$tag->name\", \"$tag_link\");\n";
         $max_tags -= 1;
         if($max_tags <= 0)
-        { 
+        {
             break;
         }
     }
@@ -140,7 +157,7 @@ function tagboar_widget($args)
 }
 
 function init_tagboard_widget()
-{ 
+{
     wp_register_sidebar_widget("TagBoard", "TagBoard", tagboar_widget);
     wp_register_widget_control("TagBoard", "TagBoard", tagboard_widget_control);
 }
