@@ -210,16 +210,16 @@ function timeout() {
 
 function onMouseMove(ev) {
     "use strict";
-    var x = ev.pageX - l_canvas.offsetLeft,
-        y = ev.pageY - l_canvas.offsetTop;
+    var x = ev.clientX - l_canvas.getBoundingClientRect().left,
+        y = ev.clientY - l_canvas.getBoundingClientRect().top;
 
     l_tagboard.onMouseMove(x, y);
 }
 
 function onMouseClick(ev) {
     "use strict";
-    var x = ev.pageX - l_canvas.offsetLeft,
-        y = ev.pageY - l_canvas.offsetTop;
+    var x = ev.clientX - l_canvas.getBoundingClientRect().left,
+        y = ev.clientY - l_canvas.getBoundingClientRect().top;
 
     l_tagboard.onMouseClick(x, y);
 }
