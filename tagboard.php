@@ -116,6 +116,7 @@ function tagboard_widget_control()
 
 function tagboar_widget($args)
 {
+    extract($args);
     $options = get_option('tagboard_options');
 
     $max_tags = $options['max_tags'];
@@ -125,19 +126,18 @@ function tagboar_widget($args)
     $width = $options['width'];
     $height = $options['height'];
 
-    echo "<script src='".$plugin_path."tagboard.js' type='text/javascript'></script>";
-    echo "<script src='".$plugin_path."sphereboard.js' type='text/javascript'></script>";
     echo $before_widget;
+    echo "<script src='".$plugin_path."tagboard.js' type='text/javascript'></script>\n";
+    echo "<script src='".$plugin_path."sphereboard.js' type='text/javascript'></script>\n";
     if( !empty($options['title']) )
     {
-        echo $before_title . $options['title'] . $after_title;
+        echo $before_title . $options['title'] . $after_title . "\n";
     }
-    echo "<div id='tagcloud' style='display:none'>";
+    echo "<div id='tagcloud' style='display:none'>\n";
     wp_tag_cloud();
-    echo "</div>";
-    echo "<canvas id='tagboardCanvas' width=$width height=$height></canvas>";
-    echo "<script type = 'text/javascript'>";
-    echo $after_widget;
+    echo "</div>\n";
+    echo "<canvas id='tagboardCanvas' width=$width height=$height></canvas>\n";
+    echo "<script type = 'text/javascript'>\n";
     foreach ($tags as $tag)
     {
         $tag_link = get_tag_link($tag->term_id);
@@ -153,7 +153,9 @@ function tagboar_widget($args)
     echo "opts.transparency = ".$options['bg_transparency'].";";
     echo "createTagBoard('sphere', opts);";
     echo "window.onload = start;";
-    echo "</script>";
+    echo "\n";
+    echo "</script>\n";
+    echo $after_widget;
 }
 
 function init_tagboard_widget()
