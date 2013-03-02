@@ -127,6 +127,10 @@ var SphereBoard = {
             super_OnMouseMove(x, y);
         };
 
+        sphereBoard.onMouseOut = function (x, y) {
+            sphereBoard.focusspr = false;
+        };
+
         return sphereBoard;
     }
 };

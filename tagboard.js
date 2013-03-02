@@ -87,6 +87,10 @@ var TagBoard = {
             tagBoard.mouse_y = y;
         };
 
+        tagBoard.onMouseOut = function (x, y) {
+            tagBoard.mouse_x = -1;
+            tagBoard.mouse_y = -1;
+        };
 
         tagBoard.onMouseClick = function (x, y) {
             if (tagBoard.focusspr !== null) {
@@ -216,6 +220,14 @@ function onMouseMove(ev) {
     l_tagboard.onMouseMove(x, y);
 }
 
+function onMouseOut(ev) {
+    "use strict";
+    var x = ev.clientX - l_canvas.getBoundingClientRect().left,
+        y = ev.clientY - l_canvas.getBoundingClientRect().top;
+
+    l_tagboard.onMouseOut(x, y);
+}
+
 function onMouseClick(ev) {
     "use strict";
     var x = ev.clientX - l_canvas.getBoundingClientRect().left,
@@ -227,6 +239,7 @@ function onMouseClick(ev) {
 function start() {
     "use strict";
     l_canvas.addEventListener("mousemove", onMouseMove, false);
+    l_canvas.addEventListener("mouseout", onMouseOut, false);
     l_canvas.addEventListener("click", onMouseClick, false);
 
     setInterval(timeout, 1000 / 20);
