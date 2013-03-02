@@ -160,8 +160,8 @@ function tagboar_widget($args)
 
 function init_tagboard_widget()
 {
-    wp_register_sidebar_widget("TagBoard", "TagBoard", tagboar_widget);
-    wp_register_widget_control("TagBoard", "TagBoard", tagboard_widget_control);
+    register_sidebar_widget("TagBoard", tagboar_widget);
+    register_widget_control("TagBoard", tagboard_widget_control);
 }
 
 // Delay plugin execution until sidebar is loaded
