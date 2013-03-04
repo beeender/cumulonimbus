@@ -186,7 +186,7 @@ function createTagBoard(type, opts) {
     "use strict";
     var context,
         obj = null;
-    l_canvas = document.getElementById("tagboardCanvas");
+    l_canvas = document.getElementById("cumulonimbusCanvas");
     context = l_canvas.getContext("2d");
 
     switch (type) {

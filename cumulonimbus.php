@@ -1,9 +1,9 @@
 <?php
 /*
-   Plugin Name: TagBoard
-   Plugin URI:
-   Description:
-   Version: 0.00
+   Plugin Name: Cumulonimbus
+   Plugin URI: https://github.com/beeender/cumulonimbus
+   Description: Cumulonimbus allows you to display your site's tags on the surface of a rotating sphere.
+   Version: 0.10
    Author: Chen Mulong
    Author URI:
 
@@ -23,7 +23,7 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function get_tagboard_options()
+function get_cumulonimbus_options()
 {
     $default_options['title'] = '';
     $default_options['width'] = 120;
@@ -32,28 +32,28 @@ function get_tagboard_options()
     $default_options['max_tags'] = 45;
     $default_options['bg_transparency'] = 'true';
 
-    $options  = get_option('tagboard_options', $default_options);
+    $options  = get_option('cumulonimbus_options', $default_options);
     if($options == $default_options)
     {
-        add_option('tagboard_options', $options, ' ', 'no');
+        add_option('cumulonimbus_options', $options, ' ', 'no');
     }
 
     return $options;
 }
 
-function tagboard_widget_control()
+function cumulonimbus_widget_control()
 {
 
-    $options = get_tagboard_options();
+    $options = get_cumulonimbus_options();
 
-    if ($_POST["tagboard_widget_submit"] )
+    if ($_POST["cumulonimbus_widget_submit"] )
     {
-        $newopts['title'] = strip_tags(stripslashes($_POST['tagboard_widget_title']));
-        $newopts['width'] = strip_tags(stripslashes($_POST['tagboard_widget_width']));
-        $newopts['height'] = strip_tags(stripslashes($_POST['tagboard_widget_height']));
-        $newopts['bgcolor'] = strip_tags(stripslashes($_POST['tagboard_widget_bgcolor']));
-        $newopts['max_tags'] = strip_tags(stripslashes($_POST['tagboard_widget_maxtags']));
-        $newopts['bg_transparency'] = strip_tags(stripslashes($_POST['tagboard_widget_bgtran']));
+        $newopts['title'] = strip_tags(stripslashes($_POST['cumulonimbus_widget_title']));
+        $newopts['width'] = strip_tags(stripslashes($_POST['cumulonimbus_widget_width']));
+        $newopts['height'] = strip_tags(stripslashes($_POST['cumulonimbus_widget_height']));
+        $newopts['bgcolor'] = strip_tags(stripslashes($_POST['cumulonimbus_widget_bgcolor']));
+        $newopts['max_tags'] = strip_tags(stripslashes($_POST['cumulonimbus_widget_maxtags']));
+        $newopts['bg_transparency'] = strip_tags(stripslashes($_POST['cumulonimbus_widget_bgtran']));
 
         if(strlen($newopts['title']) > 50)
         {
@@ -92,7 +92,7 @@ function tagboard_widget_control()
         if($options != $newopts)
         {
             $options = $newopts;
-            update_option('tagboard_options', $options);
+            update_option('cumulonimbus_options', $options);
         }
     }
 
@@ -104,23 +104,23 @@ function tagboard_widget_control()
     $bg_transparency = attribute_escape($options['bg_transparency']);
 
 ?>
-        <p><label for="tagboard_widget_title"><?php _e('Title:'); ?> <input class="widefat" id="tagboard_widget_title" name="tagboard_widget_title" type="text" value="<?php echo $title; ?>" /></label></p>
-        <p><label for="tagboard_widget_width"><?php _e('Width:'); ?> <input class="widefat" id="tagboard_widget_width" name="tagboard_widget_width" type="text" value="<?php echo $width; ?>" /></label></p>
-        <p><label for="tagboard_widget_height"><?php _e('height:'); ?> <input class="widefat" id="tagboard_widget_height" name="tagboard_widget_height" type="text" value="<?php echo $height; ?>" /></label></p>
-        <p><label for="tagboard_widget_bgcolor"><?php _e('Background color:'); ?> <input class="widefat" id="tagboard_widget_bgcolor" name="tagboard_widget_bgcolor" type="text" value="<?php echo $bgcolor; ?>" /></label></p>
-        <p><label for="tagboard_widget_maxtags"><?php _e('Max number of tags:'); ?> <input class="widefat" id="tagboard_widget_maxtags" name="tagboard_widget_maxtags" type="text" value="<?php echo $max_tags; ?>" /></label></p>
-        <p><label for="tagboard_widget_bgtran"> <input class="widefat" id="tagboard_widget_bgtran" name="tagboard_widget_bgtran" type="checkbox" value="true"<?php if( $bg_transparency == "true" ){ echo ' checked="checked"';} ?>" /> <?php _e('Background transparency'); ?> </label></p>
-        <input type="hidden" id="tagboard_widget_submit" name="tagboard_widget_submit" value="1" />
+        <p><label for="cumulonimbus_widget_title"><?php _e('Title:'); ?> <input class="widefat" id="cumulonimbus_widget_title" name="cumulonimbus_widget_title" type="text" value="<?php echo $title; ?>" /></label></p>
+        <p><label for="cumulonimbus_widget_width"><?php _e('Width:'); ?> <input class="widefat" id="cumulonimbus_widget_width" name="cumulonimbus_widget_width" type="text" value="<?php echo $width; ?>" /></label></p>
+        <p><label for="cumulonimbus_widget_height"><?php _e('height:'); ?> <input class="widefat" id="cumulonimbus_widget_height" name="cumulonimbus_widget_height" type="text" value="<?php echo $height; ?>" /></label></p>
+        <p><label for="cumulonimbus_widget_bgcolor"><?php _e('Background color:'); ?> <input class="widefat" id="cumulonimbus_widget_bgcolor" name="cumulonimbus_widget_bgcolor" type="text" value="<?php echo $bgcolor; ?>" /></label></p>
+        <p><label for="cumulonimbus_widget_maxtags"><?php _e('Max number of tags:'); ?> <input class="widefat" id="cumulonimbus_widget_maxtags" name="cumulonimbus_widget_maxtags" type="text" value="<?php echo $max_tags; ?>" /></label></p>
+        <p><label for="cumulonimbus_widget_bgtran"> <input class="widefat" id="cumulonimbus_widget_bgtran" name="cumulonimbus_widget_bgtran" type="checkbox" value="true"<?php if( $bg_transparency == "true" ){ echo ' checked="checked"';} ?>" /> <?php _e('Background transparency'); ?> </label></p>
+        <input type="hidden" id="cumulonimbus_widget_submit" name="cumulonimbus_widget_submit" value="1" />
 <?php
 }
 
-function tagboar_widget($args)
+function cumulonibus_widget($args)
 {
     extract($args);
-    $options = get_option('tagboard_options');
+    $options = get_option('cumulonimbus_options');
 
     $max_tags = $options['max_tags'];
-    $plugin_path = plugins_url('tagboard/');
+    $plugin_path = plugins_url('cumulonimbus/');
     $tags = get_tags(array('orderby' => 'count', 'order' => 'DESC'));
 
     $width = $options['width'];
@@ -136,7 +136,7 @@ function tagboar_widget($args)
     echo "<div id='tagcloud' style='display:none'>\n";
     wp_tag_cloud();
     echo "</div>\n";
-    echo "<canvas id='tagboardCanvas' width=$width height=$height></canvas>\n";
+    echo "<canvas id='cumulonimbusCanvas' width=$width height=$height></canvas>\n";
     echo "<script type = 'text/javascript'>\n";
     foreach ($tags as $tag)
     {
@@ -158,13 +158,13 @@ function tagboar_widget($args)
     echo $after_widget;
 }
 
-function init_tagboard_widget()
+function init_cumulonimbus_widget()
 {
-    register_sidebar_widget("TagBoard", tagboar_widget);
-    register_widget_control("TagBoard", tagboard_widget_control);
+    register_sidebar_widget("Cumulonimbus", cumulonibus_widget);
+    register_widget_control("Cumulonimbus", cumulonimbus_widget_control);
 }
 
 // Delay plugin execution until sidebar is loaded
-add_action('widgets_init', 'init_tagboard_widget');
+add_action('widgets_init', 'init_cumulonimbus_widget');
 
 ?>
