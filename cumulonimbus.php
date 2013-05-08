@@ -152,7 +152,7 @@ function cumulonibus_widget($args)
     echo "opts.bgcolor = \"#".$options['bgcolor']."\";";
     echo "opts.transparency = ".$options['bg_transparency'].";";
     echo "createTagBoard('sphere', opts);";
-    echo "window.onload = start;";
+    echo "start();";
     echo "\n";
     echo "</script>\n";
     echo $after_widget;
