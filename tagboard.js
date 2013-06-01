@@ -4,13 +4,15 @@ var l_tagboard = null;
 var l_canvas = null;
 /*global window*/
 /*global document*/
-/*global setInterval*/
+/*global setTimeout*/
 /*global SphereBoard*/
 
 function Options() {
     "use strict";
     this.bgcolor = '#FFFFFF';
     this.transparency = false;
+    this.max_font_size = 20;
+    this.font_color = "#000000";
 }
 
 var Sprite = {
@@ -23,7 +25,7 @@ var Sprite = {
         sprite.y = 0;
         sprite.z = 0;
         sprite.link = url;
-        sprite.font = null;
+        sprite.scale = 1;
 
         return sprite;
     }
@@ -42,6 +44,8 @@ var TagBoard = {
 
         tagBoard.bgcolor = opts.bgcolor;
         tagBoard.transparency = opts.transparency;
+        tagBoard.max_font_size = opts.max_font_size;
+        tagBoard.font_color = opts.font_color;
 
         tagBoard.focusspr = null;
         tagBoard.mouse_x = 0;
@@ -50,6 +54,11 @@ var TagBoard = {
         tagBoard.debug = false;
         tagBoard.frame_cnt = 0;
         tagBoard.start = (new Date()).getTime();
+
+        tagBoard.context.fillStyle = tagBoard.font_color;
+        tagBoard.context.textAlign = 'center';
+        tagBoard.context.font = tagBoard.max_font_size + "px serif";
+        tagBoard.context.globalAlpha = 1;
 
         tagBoard.rotateX = function (point, radians) {
             var y = point.y - tagBoard.height / 2,
@@ -104,43 +113,43 @@ var TagBoard = {
 
 
         tagBoard.draw = function () {
-            if (tagBoard.transparency) {
-                tagBoard.context.globalAlpha = 0.0;
-            } else {
-                tagBoard.context.globalAlpha = 1;
-            }
+            var i, diff, fps, scale, spr, w;
 
-            tagBoard.context.fillStyle = tagBoard.bgcolor;
+            //Reset the focus sprite
+            tagBoard.focusspr = null;
+
             tagBoard.context.clearRect(0, 0, tagBoard.width, tagBoard.height);
-            tagBoard.context.fillRect(0, 0, tagBoard.width, tagBoard.height);
-            tagBoard.context.globalAlpha = 1;
 
+            //Print FPS
             if (tagBoard.debug) {
-                var diff,
-                    fps;
                 tagBoard.frame_cnt += 1;
                 diff = (new Date()).getTime() - tagBoard.start;
                 fps = tagBoard.frame_cnt / (diff / 1000);
                 tagBoard.context.fillText(fps.toFixed(2), 30, 20);
             }
-        };
 
-        tagBoard.drawSprite = function (sprite, font_size, style, is_focus, fast_draw) {
+            for (i = 0; i < tagBoard.sprites.length; i += 1) {
+                spr = tagBoard.sprites[i];
+                scale = spr.scale.toFixed(2);
+                //console.debug("draw x:", spr.x, " y:", spr.y, " scale:", scale);
 
-            //If fast_draw is true then skip setting font. It would cost more time on firefox.
-            if (!fast_draw) {
-                tagBoard.context.font = font_size.toString() + "px sans-serif";
-            }
-            tagBoard.context.fillStyle = style;
-            tagBoard.context.textAlign = 'center';
-            tagBoard.context.fillText(sprite.name, sprite.x, sprite.y);
+                //scale 0 will cause problems to firefox
+                //https://bugzilla.mozilla.org/show_bug.cgi?id=661452
+                if (scale > 0) {
+                    tagBoard.context.save();
+                    tagBoard.context.transform(scale, 0, 0, scale, spr.x * (1 - scale), spr.y * (1 - scale));
+                    tagBoard.context.fillText(spr.name, spr.x, spr.y);
 
-            //TODO: We should compile the sprite and focusspr. is_focus might not be needed.
-            if (tagBoard.focusspr === sprite) {
-                var w = tagBoard.context.measureText(sprite.name).width;
-                tagBoard.context.strokeRect(Math.max(sprite.x - w / 2, 0),
-                    sprite.y - font_size,
-                    w, font_size + 1);
+                    if (!tagBoard.focusspr && tagBoard.mouseOnSprite(spr, tagBoard.max_font_size)) {
+                        tagBoard.focusspr = spr;
+                        w = tagBoard.context.measureText(spr.name).width;
+                        tagBoard.context.strokeRect(Math.max(spr.x - w / 2, 0),
+                            spr.y - tagBoard.max_font_size,
+                            w, tagBoard.max_font_size + 1);
+                    }
+
+                    tagBoard.context.restore();
+                }
             }
         };
 
@@ -148,7 +157,6 @@ var TagBoard = {
             tagBoard.draw();
             tagBoard.spritesMove();
         };
-
 
         tagBoard.mouseOnSprite = function (spr, fontsize) {
             var width;
@@ -210,6 +218,7 @@ function addTag(name, url) {
 function timeout() {
     "use strict";
     l_tagboard.render();
+    setTimeout(timeout, 1000 / 20);
 }
 
 function onMouseMove(ev) {
@@ -242,7 +251,7 @@ function start() {
     l_canvas.addEventListener("mouseout", onMouseOut, false);
     l_canvas.addEventListener("click", onMouseClick, false);
 
-    setInterval(timeout, 1000 / 20);
+    setTimeout(timeout, 1000 / 20);
 }
 
 

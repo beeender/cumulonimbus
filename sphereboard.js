@@ -39,54 +39,18 @@ var SphereBoard = {
         sphereBoard.rotation_y = Math.PI / 45.0 * sphereBoard.speed_y;
         sphereBoard.rotation_x = Math.PI / 45.0 * sphereBoard.speed_x;
 
-        sphereBoard.f_size_max = 17;
-        sphereBoard.f_size_min = 5;
-
         sphereBoard.sortSprites('z', true);
 
         sphereBoard.draw = function () {
-            var found_focus = false,
-                fast_draw = false,
-                spr,
-                font_size;
+            var spr;
 
             if (Math.abs(sphereBoard.rotation_x) <= 0.01 && Math.abs(sphereBoard.rotation_y) <= 0.01) {
                 return;
             }
 
-            //Draw background
-            super_Draw();
-
             for (i = 0; i < sphereBoard.sprites.length; i += 1) {
                 spr = sphereBoard.sprites[i];
-
-                if (spr.z < sphereBoard.radius * 2 / 3) {
-                    font_size = sphereBoard.f_size_min;
-                } else {
-                    font_size = sphereBoard.f_size_max * Math.abs(spr.z) / sphereBoard.radius;
-                    if (font_size === 0) {
-                        font_size = sphereBoard.f_size_min;
-                    }
-
-                    if (sphereBoard.mouseOnSprite(spr, font_size)) {
-                        //Sprites is sorted! Set the top one as focused!
-                        if (!found_focus) {
-                            sphereBoard.focusspr = spr;
-                            found_focus = true;
-                        }
-                    }
-                }
-
-                if (sphereBoard.focusspr === spr) {
-                    sphereBoard.drawSprite(spr, Math.round(font_size), "#333333", true, fast_draw);
-                } else {
-                    sphereBoard.drawSprite(spr, Math.round(font_size), "#333333", false, fast_draw);
-                }
-
-                if (spr.z < sphereBoard.radius * 2 / 3) {
-                    //The sprites is sorted. Use fast draw!
-                    fast_draw = true;
-                }
+                spr.scale = (spr.z + sphereBoard.radius) / (sphereBoard.radius * 2);
 
                 sphereBoard.rotateX(spr, sphereBoard.rotation_x);
                 sphereBoard.rotateY(spr, sphereBoard.rotation_y);
@@ -94,6 +58,7 @@ var SphereBoard = {
             }
 
             sphereBoard.sortSprites('z', true);
+            super_Draw();
         };
 
         sphereBoard.spritesMove = function () {
@@ -128,7 +93,7 @@ var SphereBoard = {
         };
 
         sphereBoard.onMouseOut = function (x, y) {
-            sphereBoard.focusspr = false;
+            sphereBoard.focusspr = null;
         };
 
         return sphereBoard;
