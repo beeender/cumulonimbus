@@ -11,7 +11,7 @@ function Options() {
     "use strict";
     this.bgcolor = '#FFFFFF';
     this.transparency = false;
-    this.max_font_size = 20;
+    this.max_font_size = 14;
     this.font_color = "#000000";
 }
 

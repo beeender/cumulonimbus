@@ -28,6 +28,7 @@ function get_cumulonimbus_options()
     $default_options['title'] = '';
     $default_options['width'] = 120;
     $default_options['height'] = 120;
+    $default_options['max_font_size'] = 14;
     $default_options['bgcolor'] = "FFFFFF";
     $default_options['max_tags'] = 45;
     $default_options['bg_transparency'] = 'true';
@@ -51,6 +52,7 @@ function cumulonimbus_widget_control()
         $newopts['title'] = strip_tags(stripslashes($_POST['cumulonimbus_widget_title']));
         $newopts['width'] = strip_tags(stripslashes($_POST['cumulonimbus_widget_width']));
         $newopts['height'] = strip_tags(stripslashes($_POST['cumulonimbus_widget_height']));
+        $newopts['max_font_size'] = strip_tags(stripslashes($_POST['cumulonimbus_widget_max_font_size']));
         $newopts['bgcolor'] = strip_tags(stripslashes($_POST['cumulonimbus_widget_bgcolor']));
         $newopts['max_tags'] = strip_tags(stripslashes($_POST['cumulonimbus_widget_maxtags']));
         $newopts['bg_transparency'] = strip_tags(stripslashes($_POST['cumulonimbus_widget_bgtran']));
@@ -70,6 +72,12 @@ function cumulonimbus_widget_control()
             strlen($newopts['height']) > 4)
         {
             $newopts['height'] = $options['height'];
+        }
+
+        if(!ctype_digit($newopts['max_font_size']) ||
+            strlen($newopts['max_font_size']) > 2)
+        {
+            $newopts['max_font_size'] = $options['max_font_size'];
         }
 
         if(!ctype_xdigit($newopts['bgcolor']) ||
@@ -99,6 +107,7 @@ function cumulonimbus_widget_control()
     $title = attribute_escape($options['title']);
     $width = attribute_escape($options['width']);
     $height = attribute_escape($options['height']);
+    $max_font_size = attribute_escape($options['max_font_size']);
     $bgcolor = attribute_escape($options['bgcolor']);
     $max_tags = attribute_escape($options['max_tags']);
     $bg_transparency = attribute_escape($options['bg_transparency']);
@@ -106,7 +115,8 @@ function cumulonimbus_widget_control()
 ?>
         <p><label for="cumulonimbus_widget_title"><?php _e('Title:'); ?> <input class="widefat" id="cumulonimbus_widget_title" name="cumulonimbus_widget_title" type="text" value="<?php echo $title; ?>" /></label></p>
         <p><label for="cumulonimbus_widget_width"><?php _e('Width:'); ?> <input class="widefat" id="cumulonimbus_widget_width" name="cumulonimbus_widget_width" type="text" value="<?php echo $width; ?>" /></label></p>
-        <p><label for="cumulonimbus_widget_height"><?php _e('height:'); ?> <input class="widefat" id="cumulonimbus_widget_height" name="cumulonimbus_widget_height" type="text" value="<?php echo $height; ?>" /></label></p>
+        <p><label for="cumulonimbus_widget_height"><?php _e('Height:'); ?> <input class="widefat" id="cumulonimbus_widget_height" name="cumulonimbus_widget_height" type="text" value="<?php echo $height; ?>" /></label></p>
+        <p><label for="cumulonimbus_widget_max_font_size"><?php _e('Max font size:'); ?> <input class="widefat" id="cumulonimbus_widget_max_font_size" name="cumulonimbus_widget_max_font_size" type="text" value="<?php echo $max_font_size; ?>" /></label></p>
         <p><label for="cumulonimbus_widget_bgcolor"><?php _e('Background color:'); ?> <input class="widefat" id="cumulonimbus_widget_bgcolor" name="cumulonimbus_widget_bgcolor" type="text" value="<?php echo $bgcolor; ?>" /></label></p>
         <p><label for="cumulonimbus_widget_maxtags"><?php _e('Max number of tags:'); ?> <input class="widefat" id="cumulonimbus_widget_maxtags" name="cumulonimbus_widget_maxtags" type="text" value="<?php echo $max_tags; ?>" /></label></p>
         <p><label for="cumulonimbus_widget_bgtran"> <input class="widefat" id="cumulonimbus_widget_bgtran" name="cumulonimbus_widget_bgtran" type="checkbox" value="true"<?php if( $bg_transparency == "true" ){ echo ' checked="checked"';} ?>" /> <?php _e('Background transparency'); ?> </label></p>
@@ -151,6 +161,7 @@ function cumulonibus_widget($args)
     echo "var opts = new Options();";
     echo "opts.bgcolor = \"#".$options['bgcolor']."\";";
     echo "opts.transparency = ".$options['bg_transparency'].";";
+    echo "opts.max_font_size= ".$options['max_font_size'].";";
     echo "createTagBoard('sphere', opts);";
     echo "start();";
     echo "\n";
