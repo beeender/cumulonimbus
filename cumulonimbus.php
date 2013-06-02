@@ -29,6 +29,7 @@ function get_cumulonimbus_options()
     $default_options['width'] = 120;
     $default_options['height'] = 120;
     $default_options['max_font_size'] = 14;
+    $default_options['font_color'] = "000000";
     $default_options['bgcolor'] = "FFFFFF";
     $default_options['max_tags'] = 45;
     $default_options['bg_alpha'] = 0;
@@ -53,6 +54,7 @@ function cumulonimbus_widget_control()
         $newopts['width'] = strip_tags(stripslashes($_POST['cumulonimbus_widget_width']));
         $newopts['height'] = strip_tags(stripslashes($_POST['cumulonimbus_widget_height']));
         $newopts['max_font_size'] = strip_tags(stripslashes($_POST['cumulonimbus_widget_max_font_size']));
+        $newopts['font_color'] = strip_tags(stripslashes($_POST['cumulonimbus_widget_fontcolor']));
         $newopts['bgcolor'] = strip_tags(stripslashes($_POST['cumulonimbus_widget_bgcolor']));
         $newopts['max_tags'] = strip_tags(stripslashes($_POST['cumulonimbus_widget_maxtags']));
         $newopts['bg_alpha'] = strip_tags(stripslashes($_POST['cumulonimbus_widget_bgalpha']));
@@ -78,6 +80,12 @@ function cumulonimbus_widget_control()
             strlen($newopts['max_font_size']) > 2)
         {
             $newopts['max_font_size'] = $options['max_font_size'];
+        }
+
+        if(!ctype_xdigit($newopts['font_color']) ||
+            strlen($newopts['font_color']) > 6)
+        { //Drop invalid color input
+            $newopts['font_color'] = $options['font_color'];
         }
 
         if(!ctype_xdigit($newopts['bgcolor']) ||
@@ -110,6 +118,7 @@ function cumulonimbus_widget_control()
     $width = attribute_escape($options['width']);
     $height = attribute_escape($options['height']);
     $max_font_size = attribute_escape($options['max_font_size']);
+    $font_color = attribute_escape($options['font_color']);
     $bgcolor = attribute_escape($options['bgcolor']);
     $max_tags = attribute_escape($options['max_tags']);
     $bg_alpha= attribute_escape($options['bg_alpha']);
@@ -119,7 +128,8 @@ function cumulonimbus_widget_control()
         <p><label for="cumulonimbus_widget_width"><?php _e('Width:'); ?> <input class="widefat" id="cumulonimbus_widget_width" name="cumulonimbus_widget_width" type="text" value="<?php echo $width; ?>" /></label></p>
         <p><label for="cumulonimbus_widget_height"><?php _e('Height:'); ?> <input class="widefat" id="cumulonimbus_widget_height" name="cumulonimbus_widget_height" type="text" value="<?php echo $height; ?>" /></label></p>
         <p><label for="cumulonimbus_widget_max_font_size"><?php _e('Max font size:'); ?> <input class="widefat" id="cumulonimbus_widget_max_font_size" name="cumulonimbus_widget_max_font_size" type="text" value="<?php echo $max_font_size; ?>" /></label></p>
-        <p><label for="cumulonimbus_widget_bgcolor"><?php _e('Background color:'); ?> <input class="widefat" id="cumulonimbus_widget_bgcolor" name="cumulonimbus_widget_bgcolor" type="text" value="<?php echo $bgcolor; ?>" /></label></p>
+        <p><label for="cumulonimbus_widget_fontcolor"><?php _e('Font color (eg: 00ff00):'); ?> <input class="widefat" id="cumulonimbus_widget_fontcolor" name="cumulonimbus_widget_fontcolor" type="text" value="<?php echo $font_color; ?>" /></label></p>
+        <p><label for="cumulonimbus_widget_bgcolor"><?php _e('Background color (eg: ff00ff):'); ?> <input class="widefat" id="cumulonimbus_widget_bgcolor" name="cumulonimbus_widget_bgcolor" type="text" value="<?php echo $bgcolor; ?>" /></label></p>
         <p><label for="cumulonimbus_widget_maxtags"><?php _e('Max number of tags:'); ?> <input class="widefat" id="cumulonimbus_widget_maxtags" name="cumulonimbus_widget_maxtags" type="text" value="<?php echo $max_tags; ?>" /></label></p>
         <p><label for="cumulonimbus_widget_bgalpha"><?php _e('Background alpha value (0-100):'); ?> <input class="widefat" id="cumulonimbus_widget_bgalpha" name="cumulonimbus_widget_bgalpha" type="text" value="<?php echo $bg_alpha; ?>" /></label></p>
         <input type="hidden" id="cumulonimbus_widget_submit" name="cumulonimbus_widget_submit" value="1" />
@@ -161,6 +171,7 @@ function cumulonibus_widget($args)
         }
     }
     echo "var opts = new Options();";
+    echo "opts.font_color = \"#".$options['font_color']."\";";
     echo "opts.bgcolor = \"#".$options['bgcolor']."\";";
     echo "opts.bg_alpha= ".$options['bg_alpha']."/100;";
     echo "opts.max_font_size= ".$options['max_font_size'].";";
