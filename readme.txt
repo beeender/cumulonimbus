@@ -3,7 +3,7 @@ Contributors: beeender
 Tags: widget,tags,sidebar
 Requires at least: 2.3
 Tested up to: 3.5.1
-Stable tag: 0.10
+Stable tag: 0.20
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -28,11 +28,17 @@ This plugin requires the modern browsers which support HTML5.
 
 == Screenshots ==
 
-A demo could be found on http://www.ikeriker.com/. Check the right side bar.
+A demo could be found on http://www.ikeriker.com/blog/cumulonimbus/ .
 
 == Changelog ==
 
-= 0.10 =
+= 0.20 =
+* Fix bug with chromium's minimal font size.
+* Change to use HTML5 canvas transform/scale feature instead of adjusting font size.
+* Add font color setting.
+* Add background alpha value setting.
+* Add maximum font size setting.
 
+= 0.10 =
 * The first version.
 

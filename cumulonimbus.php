@@ -3,11 +3,11 @@
    Plugin Name: Cumulonimbus
    Plugin URI: https://github.com/beeender/cumulonimbus
    Description: Cumulonimbus allows you to display your site's tags on the surface of a rotating sphere.
-   Version: 0.10
-   Author: Chen Mulong
+   Version: 0.20
+   Author: beeender
    Author URI:
 
-   Copyright 2012, Chen Mulong
+   Copyright 2012 - 2013, beeender
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
