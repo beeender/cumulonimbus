@@ -31,7 +31,7 @@ function get_cumulonimbus_options()
     $default_options['max_font_size'] = 14;
     $default_options['bgcolor'] = "FFFFFF";
     $default_options['max_tags'] = 45;
-    $default_options['bg_transparency'] = 'true';
+    $default_options['bg_alpha'] = 0;
 
     $options  = get_option('cumulonimbus_options', $default_options);
     if($options == $default_options)
@@ -55,7 +55,7 @@ function cumulonimbus_widget_control()
         $newopts['max_font_size'] = strip_tags(stripslashes($_POST['cumulonimbus_widget_max_font_size']));
         $newopts['bgcolor'] = strip_tags(stripslashes($_POST['cumulonimbus_widget_bgcolor']));
         $newopts['max_tags'] = strip_tags(stripslashes($_POST['cumulonimbus_widget_maxtags']));
-        $newopts['bg_transparency'] = strip_tags(stripslashes($_POST['cumulonimbus_widget_bgtran']));
+        $newopts['bg_alpha'] = strip_tags(stripslashes($_POST['cumulonimbus_widget_bgalpha']));
 
         if(strlen($newopts['title']) > 50)
         {
@@ -92,9 +92,11 @@ function cumulonimbus_widget_control()
             $newopts['max_tags'] = $options['max_tags'];
         }
 
-        if($newopts['bg_transparency'] != 'true')
+        if(!ctype_digit($newopts['bg_alpha']) ||
+            intval($newopts['bg_alpha']) < 0 ||
+            intval($newopts['bg_alpha']) > 100)
         {
-            $newopts['bg_transparency'] = 'false';
+            $newopts['bg_alpha'] = $options['bg_alpha'];
         }
 
         if($options != $newopts)
@@ -110,7 +112,7 @@ function cumulonimbus_widget_control()
     $max_font_size = attribute_escape($options['max_font_size']);
     $bgcolor = attribute_escape($options['bgcolor']);
     $max_tags = attribute_escape($options['max_tags']);
-    $bg_transparency = attribute_escape($options['bg_transparency']);
+    $bg_alpha= attribute_escape($options['bg_alpha']);
 
 ?>
         <p><label for="cumulonimbus_widget_title"><?php _e('Title:'); ?> <input class="widefat" id="cumulonimbus_widget_title" name="cumulonimbus_widget_title" type="text" value="<?php echo $title; ?>" /></label></p>
@@ -119,7 +121,7 @@ function cumulonimbus_widget_control()
         <p><label for="cumulonimbus_widget_max_font_size"><?php _e('Max font size:'); ?> <input class="widefat" id="cumulonimbus_widget_max_font_size" name="cumulonimbus_widget_max_font_size" type="text" value="<?php echo $max_font_size; ?>" /></label></p>
         <p><label for="cumulonimbus_widget_bgcolor"><?php _e('Background color:'); ?> <input class="widefat" id="cumulonimbus_widget_bgcolor" name="cumulonimbus_widget_bgcolor" type="text" value="<?php echo $bgcolor; ?>" /></label></p>
         <p><label for="cumulonimbus_widget_maxtags"><?php _e('Max number of tags:'); ?> <input class="widefat" id="cumulonimbus_widget_maxtags" name="cumulonimbus_widget_maxtags" type="text" value="<?php echo $max_tags; ?>" /></label></p>
-        <p><label for="cumulonimbus_widget_bgtran"> <input class="widefat" id="cumulonimbus_widget_bgtran" name="cumulonimbus_widget_bgtran" type="checkbox" value="true"<?php if( $bg_transparency == "true" ){ echo ' checked="checked"';} ?>" /> <?php _e('Background transparency'); ?> </label></p>
+        <p><label for="cumulonimbus_widget_bgalpha"><?php _e('Background alpha value (0-100):'); ?> <input class="widefat" id="cumulonimbus_widget_bgalpha" name="cumulonimbus_widget_bgalpha" type="text" value="<?php echo $bg_alpha; ?>" /></label></p>
         <input type="hidden" id="cumulonimbus_widget_submit" name="cumulonimbus_widget_submit" value="1" />
 <?php
 }
@@ -160,7 +162,7 @@ function cumulonibus_widget($args)
     }
     echo "var opts = new Options();";
     echo "opts.bgcolor = \"#".$options['bgcolor']."\";";
-    echo "opts.transparency = ".$options['bg_transparency'].";";
+    echo "opts.bg_alpha= ".$options['bg_alpha'].";";
     echo "opts.max_font_size= ".$options['max_font_size'].";";
     echo "createTagBoard('sphere', opts);";
     echo "start();";

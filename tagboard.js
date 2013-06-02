@@ -10,7 +10,7 @@ var l_canvas = null;
 function Options() {
     "use strict";
     this.bgcolor = '#FFFFFF';
-    this.transparency = false;
+    this.bg_alpha = 0;
     this.max_font_size = 14;
     this.font_color = "#000000";
 }
@@ -43,7 +43,7 @@ var TagBoard = {
         tagBoard.sprites = sprites;
 
         tagBoard.bgcolor = opts.bgcolor;
-        tagBoard.transparency = opts.transparency;
+        tagBoard.bg_alpha = opts.bg_alpha;
         tagBoard.max_font_size = opts.max_font_size;
         tagBoard.font_color = opts.font_color;
 
@@ -58,7 +58,6 @@ var TagBoard = {
         tagBoard.context.fillStyle = tagBoard.font_color;
         tagBoard.context.textAlign = 'center';
         tagBoard.context.font = tagBoard.max_font_size + "px serif";
-        tagBoard.context.globalAlpha = 1;
 
         tagBoard.rotateX = function (point, radians) {
             var y = point.y - tagBoard.height / 2,
@@ -119,7 +118,12 @@ var TagBoard = {
             tagBoard.focusspr = null;
 
             tagBoard.context.clearRect(0, 0, tagBoard.width, tagBoard.height);
+            tagBoard.context.globalAlpha = tagBoard.bg_alpha;
+            tagBoard.context.fillStyle = tagBoard.bgcolor;
+            tagBoard.context.fillRect(0, 0, tagBoard.width, tagBoard.height);
 
+            tagBoard.context.fillStyle = tagBoard.font_color;
+            tagBoard.context.globalAlpha = 1;
             //Print FPS
             if (tagBoard.debug) {
                 tagBoard.frame_cnt += 1;
