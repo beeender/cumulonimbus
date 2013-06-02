@@ -162,7 +162,7 @@ function cumulonibus_widget($args)
     }
     echo "var opts = new Options();";
     echo "opts.bgcolor = \"#".$options['bgcolor']."\";";
-    echo "opts.bg_alpha= ".$options['bg_alpha'].";";
+    echo "opts.bg_alpha= ".$options['bg_alpha']."/100;";
     echo "opts.max_font_size= ".$options['max_font_size'].";";
     echo "createTagBoard('sphere', opts);";
     echo "start();";
